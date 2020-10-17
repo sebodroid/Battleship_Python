@@ -1,0 +1,183 @@
+import numpy as np
+
+#THIS IS A FUNCTION THAT WILL CREATE THE BOARD AND PLACE THE SHIPS FOR THE USER 
+def create_board(): 
+
+    lst = np.zeros((6,6))
+    #Numbering the board columns and rows
+    number = 0
+    for i in range(6):
+        lst [0][number] = number 
+        lst [number] [0] = number 
+        number+=1
+
+    ship_num = 1
+    ship = 2
+   
+    #POSITIONING FOR SHIPS
+    for i in range(3):
+
+        move = 0
+
+        ship1_colum = int(input("Colunm for ship " +str(ship_num) + " (1-5): "))
+        ship1_row = int(input("Row for ship " +str(ship_num) + " (1-5): "))
+        up_down_left_right = input("Choose up, down, left, right: ")
+        print("\n")
+
+        if up_down_left_right == "right":
+            for j in range(ship):
+                lst[ship1_row][ship1_colum + move] = ship
+                move = move + 1
+  
+        elif up_down_left_right == "left":
+            for j in range(ship):
+                lst[ship1_row][ship1_colum - move] = ship
+                move = move + 1
+    
+        elif up_down_left_right == "up":
+            for j in range(ship):
+                lst[ship1_row - move][ship1_colum] = ship
+                move = move + 1
+    
+        elif up_down_left_right == "down":
+            for j in range(ship):
+                lst[ship1_row + move][ship1_colum] = ship
+                move = move + 1
+
+        ship_num += 1
+        ship += 1
+    
+    return lst 
+
+#Create the empty boards for the players to use to attack
+def create_emptyboard(): 
+    board = np.zeros((6,6))
+
+    number = 0
+    for i in range(6):
+        board [0][number] = number 
+        board [number] [0] = number 
+        number+=1
+    
+    return board
+
+def attack(enemy_board, board_to_attack,row, column):
+
+    ship_number = 0
+
+    if enemy_board[column][row] == 2 or enemy_board[column][row] == 3 or enemy_board[column][row] == 4: 
+        print("Hit at Row:" + str(row) + "\tColumn:" + str(column))
+
+        board_to_attack[column][row] = 69
+
+    else:
+        print("\nMISS\n")
+        board_to_attack[column][row] = 70
+
+    print(board_to_attack)
+
+    if enemy_board[column][row] == 2:
+        ship_number = 2
+        return ship_number 
+    
+    elif enemy_board[column][row] == 3:
+        ship_number = 3
+        return ship_number
+    
+    elif enemy_board[column][row] == 4:
+        ship_number = 4
+        return ship_number
+    
+def ship_destroyed(ship1,ship2,ship3):
+
+    Game_Over = False
+    if ship1 == 2:
+            print("The SMALL ship has been destroyed")
+    if ship2 == 3:
+        print("The MEDIUM ship has been destroyed")
+    if ship3 == 4:
+        print("The LARGE ship has been destroyed")
+    
+    if ship1 == 2 and ship2 == 3 and ship3 == 4:
+        Game_Over = True
+        print("The game is over")
+    
+    return Game_Over
+
+#CALLING THE FUNCTION create_board TO CREATE THE BOARD FOR USER 1
+print("\nUser 1 pick your ships\n")
+board1 = create_board()
+empty_board1 = create_emptyboard()
+
+#CALLING THE FUNCTION create_board TO CREATE THE BOARD FOR USER 2
+print("\nUser 2 pick your ships")
+board2 = create_board()
+empty_board2 = create_emptyboard()
+
+#USER 1 SHIPS
+user1_ship1 = 0
+user1_ship2 = 0
+user1_ship3 = 0
+
+#USER 2 SHIPS
+user2_ship1 = 0
+user2_ship2 = 0
+user2_ship3 = 0
+
+print('\n\n')
+
+Winner = 0
+
+attack_row = 0
+
+attack_column = 0
+
+attacks = None
+
+User1_Game = False
+
+while Winner == 0 :
+
+    print("\nUser 1 Turn\n")
+    attack_row = int(input("Pick a row to attack: "))
+    attack_column = int(input("Pick a column to attack: "))
+    print("\n")
+
+    attacks = attack(board2,empty_board2,attack_row,attack_column)
+
+    if attacks == 2:
+        user2_ship1 += 1
+    if attacks == 3:
+        user2_ship2 += 1
+    if attacks == 4:
+        user2_ship3 += 1
+
+    User1_Game = ship_destroyed(user2_ship1,user2_ship2,user2_ship3)
+    if User1_Game == True:
+        Winner = 1
+        break
+
+ #Attack for User 2
+    print("\nUser 2\n")
+    attack_row = int(input("Pick a row to attack: "))
+    attack_column = int(input("Pick a column to attack: "))
+    print("\n")
+    attacks = attack(board1,empty_board1,attack_row,attack_column)
+
+    if attacks == 2:
+        user1_ship1 += 1
+    if attacks == 3:
+        user1_ship2 += 1
+    if attacks == 4:
+        user1_ship3 += 1
+
+    User2_Game = ship_destroyed(user1_ship1,user1_ship2,user1_ship3)
+    if User2_Game == True:
+        Winner = 2
+   
+
+if Winner == 1:
+    print("\n\nUser 1 is the WINNER!")
+
+else:
+    print("\n\nUser 2 is the WINNER!")
